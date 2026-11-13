@@ -1,6 +1,7 @@
 package org.zerock.mallapi.config;
 
 import java.util.List;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.zerock.mallapi.security.filter.JWTCheckFilter;
 
@@ -19,6 +20,7 @@ import org.zerock.mallapi.security.handler.APILoginFailHandler;
 import org.zerock.mallapi.security.handler.APILoginSuccessHandler;
 
 @Configuration
+@EnableMethodSecurity
 public class CustomSecurityConfig {
 
     @Bean
