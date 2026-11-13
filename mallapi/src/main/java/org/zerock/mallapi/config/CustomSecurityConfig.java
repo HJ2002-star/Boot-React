@@ -1,6 +1,8 @@
 package org.zerock.mallapi.config;
 
 import java.util.List;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.zerock.mallapi.security.filter.JWTCheckFilter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,13 +45,14 @@ public class CustomSecurityConfig {
         );
 
         http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/member/login", "/error").permitAll()
+            .requestMatchers("/api/member/login", "/api/member/refresh", "/api/products/view/**", "/error").permitAll()
             .anyRequest().authenticated()
         );
 
         http.httpBasic(basic -> basic.disable());
         http.logout(logout -> logout.disable());
 
+        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

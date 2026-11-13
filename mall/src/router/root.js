@@ -1,3 +1,4 @@
+import memberRouter from "./memberRouter"
 import { Suspense, lazy } from "react"
 import { createBrowserRouter } from "react-router-dom"
 import todoRouter from "./todoRouter"
@@ -10,6 +11,7 @@ const TodoIndex = lazy(() => import("../pages/todo/IndexPage"))
 const ProductsIndex = lazy(() => import("../pages/products/IndexPage"))
 
 const root = createBrowserRouter([
+  { path: "/member", children: memberRouter() },
   {
     path: "/",
     element: (

@@ -1,8 +1,10 @@
+import useCustomLogin from "../../hooks/useCustomLogin"
 import { useEffect, useState } from "react"
 import { getList } from "../../api/todoApi"
 import useCustomMove from "../../hooks/useCustomMove"
 
 const ListComponent = () => {
+  const { exceptionHandle } = useCustomLogin()
   const { page, size, moveToRead } = useCustomMove()
   const [serverData, setServerData] = useState({ dtoList: [] })
   const [error, setError] = useState("")
@@ -16,7 +18,8 @@ const ListComponent = () => {
       .then((data) => {
         if (active) setServerData(data)
       })
-      .catch(() => {
+      .catch((error) => {
+        if (active) exceptionHandle(error)
         if (active) {
           setError("목록을 불러오지 못했습니다. API 서버와 CORS 설정을 확인하세요.")
         }

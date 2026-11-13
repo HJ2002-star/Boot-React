@@ -1,9 +1,11 @@
+import useCustomLogin from "../../hooks/useCustomLogin"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { getList } from "../../api/productsApi"
 import { API_SERVER_HOST } from "../../api/todoApi"
 
 const ListComponent = () => {
+  const { exceptionHandle } = useCustomLogin()
   const [queryParams] = useSearchParams()
 
   const page = Number(queryParams.get("page")) || 1
@@ -23,7 +25,8 @@ const ListComponent = () => {
       .then((data) => {
         if (active) setServerData(data)
       })
-      .catch(() => {
+      .catch((error) => {
+        if (active) exceptionHandle(error)
         if (active) {
           setError("상품 목록을 불러오지 못했습니다.")
         }
