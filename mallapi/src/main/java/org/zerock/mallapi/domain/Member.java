@@ -17,6 +17,9 @@ public class Member {
     @Id
     private String email;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
     private String pw;
     private String nickname;
     private boolean social;

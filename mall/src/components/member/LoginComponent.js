@@ -1,3 +1,4 @@
+import KakaoLoginComponent from "./KakaoLoginComponent"
 import { useState } from "react"
 import useCustomLogin from "../../hooks/useCustomLogin"
 
@@ -19,6 +20,7 @@ const LoginComponent = () => {
       </label>
       {loginState.error && <p role="alert" className="text-red-600">{loginState.error}</p>}
       <button disabled={loginState.loading} className="block mx-auto mt-6 rounded p-4 w-36 bg-blue-500 text-white">{loginState.loading ? "로그인 중..." : "LOGIN"}</button>
+    <KakaoLoginComponent />
     </form>
   )
 }

@@ -45,7 +45,7 @@ public class CustomSecurityConfig {
         );
 
         http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/member/login", "/api/member/refresh", "/api/products/view/**", "/error").permitAll()
+            .requestMatchers("/api/member/kakao", "/api/member/login", "/api/member/refresh", "/api/products/view/**", "/error").permitAll()
             .anyRequest().authenticated()
         );
 

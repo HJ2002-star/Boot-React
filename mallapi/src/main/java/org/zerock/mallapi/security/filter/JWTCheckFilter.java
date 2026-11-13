@@ -19,6 +19,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         return request.getMethod().equals("OPTIONS")
+            || path.equals("/api/member/kakao")
             || path.equals("/api/member/login")
             || path.equals("/api/member/refresh")
             || path.startsWith("/api/products/view/")
