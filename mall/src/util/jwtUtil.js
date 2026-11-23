@@ -17,6 +17,7 @@ jwtAxios.interceptors.request.use((config) => {
 const refreshAndRetry = async (config) => {
   if (config._retried) throw new Error("TOKEN_RETRY_FAILED")
   config._retried = true
+  const session = getCookie("member")
   try {
     if (!refreshPromise) {
       const member = getCookie("member")
@@ -26,6 +27,7 @@ const refreshAndRetry = async (config) => {
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       ).then(({ data }) => {
         if (!data.accessToken) throw new Error("INVALID_REFRESH_RESPONSE")
+        if (getCookie("member")?.refreshToken !== member.refreshToken) throw new Error("SESSION_CHANGED")
         const updated = { ...member, ...data }
         setCookie("member", updated)
         onMemberChange(updated)
@@ -35,8 +37,9 @@ const refreshAndRetry = async (config) => {
     await refreshPromise
     return jwtAxios(config)
   } catch (error) {
-    removeCookie("member")
-    onMemberChange(null)
+    if (getCookie("member")?.refreshToken === session?.refreshToken) {
+      removeCookie("member"); onMemberChange(null)
+    }
     throw Object.assign(new Error("ERROR_REFRESH_TOKEN"), { response: { status: 401, data: { error: "ERROR_REFRESH_TOKEN" } } })
   }
 }

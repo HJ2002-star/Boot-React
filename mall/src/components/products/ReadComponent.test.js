@@ -1,4 +1,5 @@
 import React from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import ReadComponent from "./ReadComponent"
@@ -12,7 +13,7 @@ test("상품 상세에서 Add Cart를 누르면 로그인 회원과 상품 번�
   getOne.mockResolvedValue(product)
   const changeCart = jest.fn().mockResolvedValue([])
   useCustomCart.mockReturnValue({ cartItems: [], loading: false, changeCart })
-  render(<MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}><ReadComponent pno="10" /></MemoryRouter>)
+  render(<QueryClientProvider client={new QueryClient({defaultOptions: {queries: {retry: false}}})}><MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}><ReadComponent pno="10" /></MemoryRouter></QueryClientProvider>)
   fireEvent.click(await screen.findByRole("button", { name: "Add Cart" }))
   await waitFor(() => expect(changeCart).toHaveBeenCalledWith({ email: "user1@aaa.com", pno: 10, qty: 1 }))
   expect(await screen.findByText("장바구니에 추가했습니다.")).toBeInTheDocument()
@@ -23,7 +24,7 @@ test("이미 담긴 상품은 확인 후 기존 수량에 1을 더해 전송한�
   const changeCart = jest.fn().mockResolvedValue([])
   useCustomCart.mockReturnValue({ cartItems: [{ pno: 10, qty: 2 }], loading: false, changeCart })
   const confirm = jest.spyOn(window, "confirm").mockReturnValue(true)
-  render(<MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}><ReadComponent pno="10" /></MemoryRouter>)
+  render(<QueryClientProvider client={new QueryClient({defaultOptions: {queries: {retry: false}}})}><MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}><ReadComponent pno="10" /></MemoryRouter></QueryClientProvider>)
   fireEvent.click(await screen.findByRole("button", { name: "Add Cart" }))
   await waitFor(() => expect(changeCart).toHaveBeenCalledWith({ email: "user1@aaa.com", pno: 10, qty: 3 }))
   confirm.mockRestore()

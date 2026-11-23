@@ -12,3 +12,7 @@ export const getList = async ({ page, size }) => {
 }
 
 export const getOne = async (pno) => (await jwtAxios.get(`${host}/${pno}`)).data
+
+export const postAdd = async form => (await jwtAxios.post(`${host}/`, form)).data
+export const putOne = async (pno, form) => (await jwtAxios.put(`${host}/${pno}`, form)).data
+export const deleteOne = async pno => (await jwtAxios.delete(`${host}/${pno}`)).data

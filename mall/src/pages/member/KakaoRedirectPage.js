@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import { useDispatch } from "react-redux"
+import useCustomLogin from "../../hooks/useCustomLogin"
 import BasicMenu from "../../components/menus/BasicMenu"
 import { exchangeKakaoCode } from "../../api/kakaoApi"
-import { setCookie } from "../../util/cookieUtil"
-import { tokensUpdated } from "../../slices/loginSlice"
 
 const KakaoRedirectPage = () => {
   const [params] = useSearchParams()
@@ -12,7 +10,7 @@ const KakaoRedirectPage = () => {
   const state = params.get("state")
   const error = params.get("error")
   const once = useRef(false)
-  const dispatch = useDispatch()
+  const { saveAsCookie } = useCustomLogin()
   const navigate = useNavigate()
   const [message, setMessage] = useState("카카오 로그인 처리 중...")
   useEffect(() => {
@@ -25,11 +23,10 @@ const KakaoRedirectPage = () => {
     sessionStorage.removeItem("kakaoOAuthState")
     exchangeKakaoCode(code).then((member) => {
       if (!member.accessToken) throw new Error("토큰을 받지 못했습니다.")
-      setCookie("member", member)
-      dispatch(tokensUpdated({ ...member, loading: false, error: "" }))
+      saveAsCookie(member)
       navigate(member.social ? "/member/modify" : "/products/list", { replace: true })
     }).catch((err) => setMessage(err.response?.data?.message || err.message || "소셜 로그인에 실패했습니다."))
-  }, [code, state, error, dispatch, navigate])
+  }, [code, state, error, saveAsCookie, navigate])
   return <><BasicMenu /><main className="max-w-2xl mx-auto mt-12 p-8 border-2"><h1 className="text-3xl mb-6">Kakao Login Redirect</h1><p role="status">{message}</p><Link className="block underline mt-6" to="/member/login">로그인 화면으로</Link></main></>
 }
 export default KakaoRedirectPage

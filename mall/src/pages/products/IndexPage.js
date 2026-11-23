@@ -15,6 +15,7 @@ const IndexPage = () => {
         >
           LIST
         </button>
+        <button className="text-xl m-1 p-2 w-20 font-extrabold underline" onClick={() => navigate("/products/add")}>ADD</button>
       </div>
 
       <Outlet />

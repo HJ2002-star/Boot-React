@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { useSelector } from "react-redux"
+import { useRecoilValue } from "recoil"
+import signinState from "../../atoms/signinState"
 import { modifyMember } from "../../api/memberApi"
 import useCustomLogin from "../../hooks/useCustomLogin"
 import ResultModal from "../common/ResultModal"
 
 const ModifyComponent = () => {
-  const info = useSelector((state) => state.loginSlice)
+  const info = useRecoilValue(signinState)
   const [member, setMember] = useState({ email: info.email || "", pw: "", nickname: info.nickname || "" })
   const [result, setResult] = useState(false)
   const [busy, setBusy] = useState(false)

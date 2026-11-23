@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { getOne } from "../../api/productsApi"
 import { API_SERVER_HOST } from "../../api/server"
 import useCustomCart from "../../hooks/useCustomCart"
 import useCustomLogin from "../../hooks/useCustomLogin"
 const ReadComponent = ({ pno }) => {
-  const [product, setProduct] = useState(null)
+  const query = useQuery({ queryKey: ["products", "detail", Number(pno)], queryFn: () => getOne(pno) })
+  const product = query.data
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
   const { cartItems, changeCart, loading } = useCustomCart()
   const { loginState, isLogin, moveToLogin } = useCustomLogin()
-  useEffect(() => {
-    let active = true
-    setProduct(null); setError(""); setMessage("")
-    getOne(pno).then(data => { if (active) setProduct(data) })
-      .catch(() => { if (active) setError("상품을 불러오지 못했습니다.") })
-    return () => { active = false }
-  }, [pno])
   const handleClickAddCart = async () => {
     if (!isLogin) { moveToLogin(); return }
     const added = cartItems.find(item => Number(item.pno) === Number(pno))
@@ -28,7 +23,7 @@ const ReadComponent = ({ pno }) => {
     } catch { setError("장바구니에 추가하지 못했습니다. 로그인과 서버 상태를 확인하세요.") }
   }
   return <div className="border-2 border-sky-200 mt-6 p-4">
-    {error && <p role="alert" className="text-red-600">{error}</p>}
+    {(error || query.isError) && <p role="alert" className="text-red-600">{error || "상품을 불러오지 못했습니다."}</p>}
     {message && <p role="status" className="text-green-700">{message}</p>}
     {!product && !error && <p>불러오는 중...</p>}
     {product && <>
@@ -38,6 +33,7 @@ const ReadComponent = ({ pno }) => {
         src={`${API_SERVER_HOST}/api/products/view/s_${encodeURIComponent(file)}`} />)}</div>
       <div className="flex justify-end flex-wrap gap-2 p-4">
         <button type="button" disabled={loading} className="rounded p-4 text-xl text-white bg-green-500" onClick={handleClickAddCart}>Add Cart</button>
+        <Link className="rounded p-4 text-xl text-white bg-red-500" to={`/products/modify/${pno}`}>Modify</Link>
         <Link className="rounded p-4 text-xl text-white bg-blue-500" to="/products/list">List</Link>
       </div>
     </>}

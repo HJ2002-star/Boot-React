@@ -1,46 +1,19 @@
-import useCustomLogin from "../../hooks/useCustomLogin"
-import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Link, useSearchParams } from "react-router-dom"
 import { getList } from "../../api/productsApi"
 import { API_SERVER_HOST } from "../../api/todoApi"
 
 const ListComponent = () => {
-  const { exceptionHandle } = useCustomLogin()
   const [queryParams] = useSearchParams()
 
   const page = Number(queryParams.get("page")) || 1
   const size = Number(queryParams.get("size")) || 10
 
-  const [serverData, setServerData] = useState({ dtoList: [] })
-  const [fetching, setFetching] = useState(false)
-  const [error, setError] = useState("")
-
-  useEffect(() => {
-    let active = true
-
-    setFetching(true)
-    setError("")
-
-    getList({ page, size })
-      .then((data) => {
-        if (active) setServerData(data)
-      })
-      .catch((error) => {
-        if (active) exceptionHandle(error)
-        if (active) {
-          setError("상품 목록을 불러오지 못했습니다.")
-        }
-      })
-      .finally(() => {
-        if (active) setFetching(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [page, size, exceptionHandle])
-
-  return (
+  const query = useQuery({ queryKey: ["products", "list", { page, size }], queryFn: () => getList({ page, size }) })
+  const serverData = query.data || { dtoList: [] }
+  const fetching = query.isFetching
+  const error = query.isError ? "상품 목록을 불러오지 못했습니다." : ""
+return (
     <div className="border-2 border-blue-100 mt-10 mx-2">
       {fetching && <p className="p-4">불러오는 중...</p>}
       {error && <p className="p-4 text-red-600">{error}</p>}
