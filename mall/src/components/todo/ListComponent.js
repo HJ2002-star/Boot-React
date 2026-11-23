@@ -28,7 +28,7 @@ const ListComponent = () => {
     return () => {
       active = false
     }
-  }, [page, size])
+  }, [page, size, exceptionHandle])
 
   return (
     <div className="border-2 border-blue-100 mt-10 mx-2">

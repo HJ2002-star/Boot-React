@@ -37,7 +37,7 @@ const refreshAndRetry = async (config) => {
   } catch (error) {
     removeCookie("member")
     onMemberChange(null)
-    throw { response: { status: 401, data: { error: "ERROR_REFRESH_TOKEN" } } }
+    throw Object.assign(new Error("ERROR_REFRESH_TOKEN"), { response: { status: 401, data: { error: "ERROR_REFRESH_TOKEN" } } })
   }
 }
 

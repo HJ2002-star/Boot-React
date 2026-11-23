@@ -10,3 +10,5 @@ export const getList = async ({ page, size }) => {
 
   return res.data
 }
+
+export const getOne = async (pno) => (await jwtAxios.get(`${host}/${pno}`)).data

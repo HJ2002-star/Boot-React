@@ -1,3 +1,4 @@
+import { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Navigate, useNavigate } from "react-router-dom"
 import { loginPostAsync, logout } from "../slices/loginSlice"
@@ -11,7 +12,7 @@ const useCustomLogin = () => {
   const moveToPath = (path) => navigate(path, { replace: true })
   const moveToLogin = () => navigate("/member/login", { replace: true })
   const moveToLoginReturn = () => <Navigate to="/member/login" replace />
-  const exceptionHandle = (error) => {
+  const exceptionHandle = useCallback((error) => {
     const code = error.response?.data?.error
     if (error.response?.status === 401 || code === "REQUIRE_LOGIN" || code === "ERROR_REFRESH_TOKEN") {
       dispatch(logout())
@@ -21,7 +22,7 @@ const useCustomLogin = () => {
     } else {
       window.alert("서버 요청에 실패했습니다. API 서버를 확인하세요.")
     }
-  }
+  }, [dispatch, navigate])
   return { loginState, isLogin: Boolean(loginState.email), doLogin, doLogout, moveToPath, moveToLogin, moveToLoginReturn, exceptionHandle }
 }
 export default useCustomLogin

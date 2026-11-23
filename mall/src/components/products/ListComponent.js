@@ -1,6 +1,6 @@
 import useCustomLogin from "../../hooks/useCustomLogin"
 import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { getList } from "../../api/productsApi"
 import { API_SERVER_HOST } from "../../api/todoApi"
 
@@ -38,7 +38,7 @@ const ListComponent = () => {
     return () => {
       active = false
     }
-  }, [page, size])
+  }, [page, size, exceptionHandle])
 
   return (
     <div className="border-2 border-blue-100 mt-10 mx-2">
@@ -51,7 +51,7 @@ const ListComponent = () => {
             key={product.pno}
             className="w-1/2 p-1 rounded shadow-md border-2"
           >
-            <div className="flex flex-col h-full">
+            <Link to={`/products/read/${product.pno}?page=${page}&size=${size}`} className="flex flex-col h-full" aria-label={`${product.pname} 상세 보기`}>
               <div className="font-extrabold text-2xl p-2">
                 {product.pno}
               </div>
@@ -76,12 +76,15 @@ const ListComponent = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         ))}
       </div>
     </div>
   )
+
+
+
 }
 
 export default ListComponent
